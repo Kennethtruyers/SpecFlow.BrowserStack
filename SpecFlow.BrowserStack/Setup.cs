@@ -22,7 +22,11 @@ namespace SpecFlow.BrowserStack
 					StartInfo = new ProcessStartInfo
 					{
 						FileName = "BrowserStackLocal.exe",
-						Arguments = ConfigurationManager.AppSettings["browserstack.key"] + " -forcelocal"
+						Arguments = ConfigurationManager.AppSettings["browserstack.key"] 
+                        + " -proxyHost " + ConfigurationManager.AppSettings["browserstack.proxyHost"] 
+                        + "  -proxyPort " + ConfigurationManager.AppSettings["browserstack.proxyPort"] 
+                        + " -forcelocal"
+
 					}
 				}.Start();
 
@@ -30,9 +34,10 @@ namespace SpecFlow.BrowserStack
 			var capabilities = new DesiredCapabilities();
 
 			capabilities.SetCapability(CapabilityType.Version, ConfigurationManager.AppSettings["version"]);
-			capabilities.SetCapability("os", ConfigurationManager.AppSettings["os"]);
+			capabilities.SetCapability("os", ConfigurationManager.AppSettings["os_name"]);
 			capabilities.SetCapability("os_version", ConfigurationManager.AppSettings["os_version"]);
-			capabilities.SetCapability("browserName", ConfigurationManager.AppSettings["browser"]);
+			capabilities.SetCapability("browserName", ConfigurationManager.AppSettings["browser_name"]);
+            capabilities.SetCapability("version", ConfigurationManager.AppSettings["browser_version"]);
 			
 			capabilities.SetCapability("browserstack.user", ConfigurationManager.AppSettings["browserstack.user"]);
 			capabilities.SetCapability("browserstack.key", ConfigurationManager.AppSettings["browserstack.key"]);
@@ -42,7 +47,7 @@ namespace SpecFlow.BrowserStack
 			capabilities.SetCapability("name", ScenarioContext.Current.ScenarioInfo.Title);
 
 			driver = new RemoteWebDriver(new Uri(ConfigurationManager.AppSettings["browserstack.hub"]), capabilities);
-			driver.Manage().Timeouts().ImplicitlyWait(TimeSpan.FromSeconds(1));
+			driver.Manage().Timeouts().ImplicitlyWait(TimeSpan.FromSeconds(3));
 			ScenarioContext.Current["driver"] = driver;
 		}
 
